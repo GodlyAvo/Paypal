@@ -139,7 +139,7 @@
         <img src="pfp.png" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=🥭'">
         
         <h2 class="name">Pedrito</h2>
-        <p class="role">Checkout</p>
+        <p class="role">Lead Mod Checkout</p>
         
         <div class="amount-container">
             <span class="currency-symbol">$</span>
@@ -159,14 +159,11 @@
         const noButton = document.getElementById('btn-no'); 
         
         let trapArmed = false; 
-        let trapTimer;
 
-        // Reset 
+        // Reset function
         function resetButtonToStart() {
             trapArmed = false; 
-            clearTimeout(trapTimer);
             
-
             if (yesButton.parentNode === document.body) {
                 actionButtons.insertBefore(yesButton, noButton);
             }
@@ -177,7 +174,6 @@
             yesButton.style.width = '100%';
         }
 
-        // Button reveal 
         amountField.addEventListener('input', function(e) {
             let rawValue = e.target.value.replace(/[^\d]/g, '');
             
@@ -193,29 +189,26 @@
             
             if (actionButtons.style.display !== 'flex') {
                 actionButtons.style.display = 'flex';
-                
-                trapTimer = setTimeout(() => {
-                    trapArmed = true;
-                }, 1000); 
+                trapArmed = true; 
             }
         });
 
-        // Cancel button
+        // Cancel button 
         noButton.addEventListener('click', () => {
-            alert('Good choice hehe');
+            alert('Good choice, save ur moneys.');
             resetButtonToStart();
             
-            
-            trapTimer = setTimeout(() => {
-                trapArmed = true;
-            }, 1000);
+            setTimeout(() => {
+                if (actionButtons.style.display === 'flex') {
+                    trapArmed = true;
+                }
+            }, 100);
         });
 
-        // Moving button 
+        // Escaping button 
         function dodgeCursor() {
             if (!trapArmed) return; 
 
-            // Breaks the button completely out of the card container
             if (yesButton.parentNode !== document.body) {
                 document.body.appendChild(yesButton);
             }
