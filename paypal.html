@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Secure Checkout</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f7fa; 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+        .card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 350px;
+            position: relative;
+            z-index: 10;
+        }
+        .logo {
+            font-size: 28px;
+            font-style: italic;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+        .logo-pay { color: #003087; } 
+        .logo-pal { color: #009cde; } 
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: block;
+            border: 3px solid #009cde;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            object-fit: cover; 
+        }
+        
+        .name {
+            font-size: 24px;
+            color: #333;
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        .role {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 30px 0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .amount-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px; 
+            font-size: 42px;
+            color: #333;
+        }
+        .currency-symbol {
+            font-size: 42px;
+            font-weight: 300;
+            margin-right: 5px;
+        }
+        
+        .amount-input {
+            font-size: 42px;
+            font-weight: 300;
+            color: #333;
+            width: 160px;
+            border: none;
+            outline: none;
+            text-align: center;
+            background: transparent;
+        }
+        .amount-input::placeholder {
+            color: #ccc;
+        }
+        
+        .btn-container {
+            display: none; 
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            min-height: 115px; 
+            animation: popIn 0.4s ease forwards; 
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px; 
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        #btn-yes {
+            background-color: #ffc439; 
+            color: #000;
+            position: relative;
+            z-index: 1000; 
+        }
+        #btn-no {
+            background-color: #0070ba; 
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+        #btn-no:hover {
+            background-color: #005ea6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="logo">
+            <span class="logo-pay">Pay</span><span class="logo-pal">Pal</span>
+        </div>
+        
+        <img src="pfp.png" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=🥭'">
+        
+        <h2 class="name">Pedrito</h2>
+        <p class="role">Checkout</p>
+        
+        <div class="amount-container">
+            <span class="currency-symbol">$</span>
+            <input type="text" inputmode="numeric" class="amount-input" placeholder="0.00" id="amount-field">
+        </div>
+        
+        <div class="btn-container" id="action-buttons">
+            <button id="btn-yes">Send Money</button>
+            <button id="btn-no">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const amountField = document.getElementById('amount-field');
+        const actionButtons = document.getElementById('action-buttons');
+        const yesButton = document.getElementById('btn-yes');
+        const noButton = document.getElementById('btn-no'); 
+        
+        let trapArmed = false; 
+        let trapTimer;
+
+        // Reset 
+        function resetButtonToStart() {
+            trapArmed = false; 
+            clearTimeout(trapTimer);
+            
+
+            if (yesButton.parentNode === document.body) {
+                actionButtons.insertBefore(yesButton, noButton);
+            }
+            
+            yesButton.style.position = 'relative';
+            yesButton.style.left = 'auto';
+            yesButton.style.top = 'auto';
+            yesButton.style.width = '100%';
+        }
+
+        // Button reveal 
+        amountField.addEventListener('input', function(e) {
+            let rawValue = e.target.value.replace(/[^\d]/g, '');
+            
+            if (rawValue === '' || parseInt(rawValue, 10) === 0) {
+                e.target.value = '';
+                actionButtons.style.display = 'none';
+                resetButtonToStart();
+                return;
+            }
+            
+            let formattedValue = (parseInt(rawValue, 10) / 100).toFixed(2);
+            e.target.value = formattedValue;
+            
+            if (actionButtons.style.display !== 'flex') {
+                actionButtons.style.display = 'flex';
+                
+                trapTimer = setTimeout(() => {
+                    trapArmed = true;
+                }, 1000); 
+            }
+        });
+
+        // Cancel button
+        noButton.addEventListener('click', () => {
+            alert('Good choice hehe');
+            resetButtonToStart();
+            
+            
+            trapTimer = setTimeout(() => {
+                trapArmed = true;
+            }, 1000);
+        });
+
+        // Moving button 
+        function dodgeCursor() {
+            if (!trapArmed) return; 
+
+            // Breaks the button completely out of the card container
+            if (yesButton.parentNode !== document.body) {
+                document.body.appendChild(yesButton);
+            }
+
+            yesButton.style.position = 'fixed';
+            yesButton.style.width = '200px'; 
+            
+            const maxRight = window.innerWidth - 220; 
+            const maxBottom = window.innerHeight - 80;
+            
+            const randomX = Math.max(20, Math.floor(Math.random() * maxRight));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxBottom));
+            
+            yesButton.style.left = `${randomX}px`;
+            yesButton.style.top = `${randomY}px`;
+        }
+
+        yesButton.addEventListener('mouseover', dodgeCursor);
+        
+        yesButton.addEventListener('touchstart', (e) => {
+            if (trapArmed) {
+                e.preventDefault(); 
+                dodgeCursor();
+            }
+        });
+    </script>
+</body>
+</html>
