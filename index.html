@@ -136,7 +136,7 @@
             <span class="logo-pay">Pay</span><span class="logo-pal">Pal</span>
         </div>
         
-        <img src="pfp.png" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=🥭'">
+        <img src="pfp.PNG" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=🥭'">
         
         <h2 class="name">Pedrito</h2>
         <p class="role">Lead Mod Checkout</p>
@@ -195,7 +195,7 @@
 
         // Cancel button 
         noButton.addEventListener('click', () => {
-            alert('Good choice, save ur moneys.');
+            alert('Transaction Declined. Good choice hehe');
             resetButtonToStart();
             
             setTimeout(() => {
@@ -206,8 +206,10 @@
         });
 
         // Escaping button 
-        function dodgeCursor() {
+        function dodgeCursor(e) {
             if (!trapArmed) return; 
+            
+            if (e) e.preventDefault(); 
 
             if (yesButton.parentNode !== document.body) {
                 document.body.appendChild(yesButton);
@@ -226,13 +228,10 @@
             yesButton.style.top = `${randomY}px`;
         }
 
-        yesButton.addEventListener('mouseover', dodgeCursor);
+        const trapTriggers = ['mouseover', 'mouseenter', 'mousemove', 'mousedown', 'click', 'pointerdown', 'touchstart'];
         
-        yesButton.addEventListener('touchstart', (e) => {
-            if (trapArmed) {
-                e.preventDefault(); 
-                dodgeCursor();
-            }
+        trapTriggers.forEach(eventType => {
+            yesButton.addEventListener(eventType, dodgeCursor, { passive: false });
         });
     </script>
 </body>
