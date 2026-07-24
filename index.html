@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PayPal Secure Checkout</title>
     <style>
         body {
@@ -10,10 +10,12 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            height: 100dvh; 
             margin: 0;
             background: #f5f7fa; 
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             overflow: hidden;
+            position: relative;
         }
         .card {
             background: #ffffff;
@@ -21,7 +23,8 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
-            width: 350px;
+            width: 90%; 
+            max-width: 350px;
             position: relative;
             z-index: 10;
         }
@@ -44,6 +47,7 @@
             border: 3px solid #009cde;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
             object-fit: cover; 
+            background-color: #f5f7fa;
         }
         
         .name {
@@ -111,12 +115,13 @@
             border-radius: 50px; 
             cursor: pointer;
             transition: box-shadow 0.2s;
+            box-sizing: border-box;
         }
         #btn-yes {
             background-color: #ffc439; 
             color: #000;
             position: relative;
-            z-index: 1000; 
+            z-index: 9999; 
         }
         #btn-no {
             background-color: #0070ba; 
@@ -136,7 +141,7 @@
             <span class="logo-pay">Pay</span><span class="logo-pal">Pal</span>
         </div>
         
-        <img src="pfp.PNG" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=🥭'">
+        <img src="https://github.com/GodlyAvo/Paypal/blob/main/pfp.png?raw=true" alt="Profile Picture" class="avatar" onerror="this.src='https://via.placeholder.com/80/f5f7fa/009cde?text=?'">
         
         <h2 class="name">Pedrito</h2>
         <p class="role">Lead Mod Checkout</p>
@@ -160,7 +165,6 @@
         
         let trapArmed = false; 
 
-        // Reset function
         function resetButtonToStart() {
             trapArmed = false; 
             
@@ -193,7 +197,6 @@
             }
         });
 
-        // Cancel button 
         noButton.addEventListener('click', () => {
             alert('Transaction Declined. Good choice hehe');
             resetButtonToStart();
@@ -205,17 +208,15 @@
             }, 100);
         });
 
-        // Escaping button 
         function dodgeCursor(e) {
             if (!trapArmed) return; 
-            
             if (e) e.preventDefault(); 
 
             if (yesButton.parentNode !== document.body) {
                 document.body.appendChild(yesButton);
             }
 
-            yesButton.style.position = 'fixed';
+            yesButton.style.position = 'absolute';
             yesButton.style.width = '200px'; 
             
             const maxRight = window.innerWidth - 220; 
